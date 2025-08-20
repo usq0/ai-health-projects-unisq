@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interview AI System – Research Roadmap</title>
+  <meta name="description" content="Single-file, printable roadmap and project brief for an integrated AI-led interview, data, and analysis platform for healthcare." />
+  <style>
+    /* =========================================================
+       UniSQ-inspired Appearance
+       - Purple header & footer (white text)
+       - White cards with orange accent strip
+       - Text colours: black on white, black on orange, white on purple
+       ========================================================= */
+    :root{
+      --purple:#5A2356;   /* deep UniSQ-like purple (white text) */
+      --purple-600:#4c1d49;
+      --orange:#FF8A00;   /* vibrant orange accent (black text) */
+      --orange-600:#e67b00;
+      --ink:#111111;      /* black */
+      --muted:#5f6572;    /* neutral gray for secondary text on white */
+      --panel:#ffffff;    /* white surfaces */
+      --panel-2:#f7f7f9;  /* soft gray sections */
+      --border:#e5e7eb;   /* subtle borders */
+      --shadow:0 10px 28px rgba(16,14,23,.10), 0 2px 6px rgba(16,14,23,.06);
+      --radius:14px;
+    }
+
+    /* Base */
+    html,body{height:100%;}
+    body{
+      margin:0;
+      color:var(--ink);
+      background:var(--panel);
+      font:15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    a{color:var(--purple); text-decoration:none;}
+    a:hover{text-decoration:underline;}
+    .container{width:min(1100px,92vw); margin:0 auto;}
+
+    /* Header (purple band, white text) */
+    header.nav{
+      position:sticky; top:0; z-index:50;
+      background:var(--purple);
+      color:#fff;
+      border-bottom:3px solid var(--orange);
+      box-shadow:0 2px 0 rgba(0,0,0,.04);
+    }
+    header .inner{display:flex; align-items:center; justify-content:space-between; padding:12px 0;}
+    .brand{display:flex; align-items:center; gap:12px; color:#fff; font-weight:700;}
+    .brand .logo{width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg, #ffffff, #ffffff); opacity:.9;}
+    nav a{margin-left:18px; font-weight:700; color:#fff; border-bottom:3px solid transparent; padding-bottom:4px;}
+    nav a:hover{border-bottom-color:rgba(255,255,255,.5);}
+    nav a.active{border-bottom-color:var(--orange);}
+    .actions{display:flex; gap:10px;}
+    .btn{
+      background:var(--orange);
+      color:#111; /* black on orange */
+      border:1px solid var(--orange);
+      padding:8px 14px; border-radius:10px; font-weight:800; cursor:pointer;
+    }
+    .btn:hover{background:var(--orange-600); border-color:var(--orange-600);}
+
+    /* Pages */
+    .page{display:none; padding:28px 0 60px;}
+    .page.active{display:block;}
+
+    /* Hero */
+    .hero{
+      margin-top:24px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:28px;
+      box-shadow:var(--shadow);
+    }
+    .kicker{
+      display:inline-block;
+      background:var(--orange);
+      color:#111; /* black on orange */
+      font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:12px;
+      padding:4px 10px; border-radius:999px;
+    }
+    .title{font-size:clamp(28px,4vw,40px); line-height:1.15; margin:12px 0 8px; color:var(--purple);}
+    .subtitle{color:var(--muted); margin:0 0 16px; max-width:850px;}
+
+    /* Cards (white with orange strip on the left) */
+    .grid{display:grid; gap:18px;}
+    .grid.cards{grid-template-columns:repeat(auto-fit, minmax(260px,1fr));}
+    .card{
+      position:relative;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px 18px 18px 22px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:0 auto 0 0; width:8px; background:var(--orange);
+      border-top-left-radius:var(--radius); border-bottom-left-radius:var(--radius);
+    }
+    .card:hover{transform:translateY(-2px); transition:transform .15s ease;}
+    .card h3{margin:6px 0 6px; font-size:18px; color:var(--ink);}
+    .card p{color:var(--muted); margin:0;}
+    .chip{
+      display:inline-flex; align-items:center; gap:6px;
+      background:var(--panel-2); color:var(--ink);
+      padding:4px 8px; font-size:12px; border-radius:999px; border:1px solid var(--border);
+      font-weight:600;
+    }
+
+    /* Roadmap */
+    .roadmap{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+    .roadmap h3{margin:0 0 10px; color:var(--purple);}
+    .rm-grid{display:grid; grid-template-columns:140px 1fr; gap:10px; align-items:center;}
+    .rm-row{display:contents;}
+    .rm-label{color:var(--muted); font-weight:800;}
+    .bar{height:14px; border-radius:999px; background:var(--panel-2); position:relative; border:1px solid var(--border);}
+    .bar .span{position:absolute; left:var(--start); right:calc(100% - var(--end)); top:0; bottom:0;
+      background:linear-gradient(90deg, var(--orange), var(--purple)); border-radius:inherit;}
+    .rm-scale{display:grid; grid-template-columns:repeat(24,1fr); gap:4px; margin-top:10px;}
+    .rm-scale div{height:6px; background:var(--panel-2); border:1px solid var(--border); border-radius:2px;}
+
+    /* Sections */
+    .two-col{display:grid; grid-template-columns:1.1fr .9fr; gap:18px;}
+    .section{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+    h1,h2,h3{color:var(--purple);}
+    h2{margin:6px 0 10px;}
+    h3{margin:8px 0;}
+    ul{padding-left:18px;}
+    .meta{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px;}
+
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px; background:var(--panel-2); border:1px solid var(--border); padding:2px 6px; border-radius:6px;}
+    .backlink{display:inline-flex; align-items:center; gap:8px; font-weight:800; margin-bottom:10px; color:var(--purple);}
+
+    /* Footer (purple band, white text) */
+    footer.band{
+      background:var(--purple);
+      color:#fff; /* white on purple */
+      margin-top:40px;
+      border-top:3px solid var(--orange);
+    }
+    footer .inner{padding:22px 0; font-weight:600;}
+
+    /* Responsive */
+    @media (max-width:860px){
+      .two-col{grid-template-columns:1fr;}
+      nav{display:none;}
+    }
+
+    /* Print */
+    @media print{
+      header.nav, .actions{display:none!important;}
+      body{background:#fff; color:#000;}
+      .page{display:block!important; break-after:page; box-shadow:none!important;}
+      .hero,.section,.card,.roadmap{background:#fff!important; border-color:#bbb!important;}
+      a{color:#000; text-decoration:none;}
+      footer.band{color:#000; background:#fff; border:none;}
+    }
+  </style>
+</head>
+<body>
+  <header class="nav" role="banner">
+    <div class="container inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <!-- Title intentionally removed -->
+      </div>
+      <nav aria-label="Primary">
+        <a href="#home" data-link>Home</a>
+        <a href="#project-1" data-link>Mapping Processes</a>
+        <a href="#project-2" data-link>Interview Agent</a>
+        <a href="#project-3" data-link>Transcribe &amp; Summarise</a>
+        <a href="#project-4" data-link>Secure Data Platform</a>
+        <a href="#project-5" data-link>Thematic Analysis</a>
+        <a href="#project-6" data-link>Human-in-the-Loop</a>
+      </nav>
+      <div class="actions">
+        <button class="btn" id="printBtn" title="Print to PDF">Print</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Home Page -->
+  <main id="home" class="page active" role="region" aria-labelledby="home-title">
+    <div class="container">
+      <section class="hero">
+        <span class="kicker">Healthcare interviews · Voice · Text · Governance</span>
+        <h1 class="title" id="home-title">Integrated AI Interview &amp; Data Platform</h1>
+        <p class="subtitle">
+          Goal: Design and build an end-to-end system that conducts interviews via <strong>VoIP</strong> and <strong>text</strong>,
+          escalates to humans when needed, then <strong>transcribes, summarises, contextualises</strong>, and <strong>securely stores</strong>
+          data for analysis (e.g., AI-assisted thematic analysis). Reduce manual fragmentation, improve patient experience, and strengthen
+          data quality and governance.
+        </p>
+        <div class="meta">
+          <span class="chip">Clinically safe by design</span>
+          <span class="chip">Privacy &amp; consent first</span>
+          <span class="chip">Human-in-the-loop</span>
+          <span class="chip">Printable · Single file</span>
+        </div>
+      </section>
+
+      <!-- Roadmap -->
+      <section class="roadmap" aria-labelledby="rm-title" style="margin-top:18px;">
+        <h3 id="rm-title">24-Month Roadmap (illustrative)</h3>
+        <div class="rm-grid" role="list">
+          <div class="rm-row" role="listitem">
+            <div class="rm-label">0–3: Discovery</div>
+            <div class="bar" aria-hidden="true"><span class="span" style="--start:0%; --end:12.5%"></span></div>
+          </div>
+          <div class="rm-row" role="listitem">
+            <div class="rm-label">4–6: MVP</div>
+            <div class="bar"><span class="span" style="--start:12.5%; --end:25%"></span></div>
+          </div>
+          <div class="rm-row" role="listitem">
+            <div class="rm-label">7–12: Pilot</div>
+            <div class="bar"><span class="span" style="--start:25%; --end:50%"></span></div>
+          </div>
+          <div class="rm-row" role="listitem">
+            <div class="rm-label">13–24: Scale</div>
+            <div class="bar"><span class="span" style="--start:50%; --end:100%"></span></div>
+          </div>
+        </div>
+        <div class="rm-scale" aria-hidden="true" title="Months 1–24">
+          <!-- 24 ticks -->
+          <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+          <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        </div>
+        <div style="margin-top:12px; color:var(--muted); font-size:14px;">
+          Indicative phasing: Discovery (P1) → MVP build (P2) → Pilot with real clinics (P3) → Scale &amp; governance hardening (P4).
+        </div>
+      </section>
+
+      <!-- Summary Cards -->
+      <section style="margin-top:18px;">
+        <h2>Research Projects (click a card)</h2>
+        <div class="grid cards" role="list">
+          <a class="card" href="#project-1" role="listitem">
+            <div class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">P1 · Discovery</div>
+            <h3>Mapping Current Interview &amp; Data Collection Processes</h3>
+            <p>As-is workflows, pain points, and requirements for hospitals/clinics; define to-be designs.</p>
+          </a>
+          <a class="card" href="#project-2" role="listitem">
+            <div class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">P2 · Build</div>
+            <h3>Automated Interview Agent (Voice + Text)</h3>
+            <p>VoIP/IVR + chat/SMS bot with triage, consent capture, scheduling, and safe escalation.</p>
+          </a>
+          <a class="card" href="#project-3" role="listitem">
+            <div class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">P2 · Build</div>
+            <h3>Transcription, Summarisation &amp; Contextualisation Pipeline</h3>
+            <p>Clinical-grade STT, diarisation, summaries contextualised with EMR/appointment data.</p>
+          </a>
+          <a class="card" href="#project-4" role="listitem">
+            <div class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">P2–P4 · Platform</div>
+            <h3>Secure Data Platform &amp; Governance</h3>
+            <p>Encryption, consent &amp; retention, access control, auditability, privacy and risk controls.</p>
+          </a>
+          <a class="card" href="#project-5" role="listitem">
+            <div class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">P3 · Pilot</div>
+            <h3>AI-Assisted Thematic Analysis</h3>
+            <p>Human-AI coding assistant, reproducible codebooks, inter-rater reliability.</p>
+          </a>
+          <a class="card" href="#project-6" role="listitem">
+            <div class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">P3–P4 · Service</div>
+            <h3>Human-in-the-Loop Orchestration &amp; Escalation</h3>
+            <p>Operator console, SLAs, safety policies, and workflow engine for seamless handover.</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- Architecture snapshot -->
+      <section class="section" style="margin-top:18px;">
+        <h2>Integrated Architecture (snapshot)</h2>
+        <div class="two-col">
+          <div>
+            <ul>
+              <li><strong>Channels:</strong> SIP/VoIP (IVR + WebRTC), SMS, web chat, email intake.</li>
+              <li><strong>Agent brain:</strong> NLU + policy engine + safety guardrails; escalation rules.</li>
+              <li><strong>Scheduling:</strong> Calendar APIs, queueing, reminders &amp; confirmations via SMS/email.</li>
+              <li><strong>Data pipeline:</strong> STT → diarisation → summary → context merge → storage.</li>
+              <li><strong>Platform:</strong> Consent &amp; identity, encryption at rest/in transit, role-based access, audit log.</li>
+              <li><strong>Research UI:</strong> Thematic coding workspace, codebook management, exports.</li>
+            </ul>
+          </div>
+          <div>
+            <div class="section" style="padding:12px;">
+              <svg viewBox="0 0 740 250" width="100%" height="180" aria-label="Architecture diagram">
+                <!-- Boxes (white) -->
+                <rect x="10" y="20" width="210" height="60" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+                <text x="25" y="50" fill="#111111" font-size="14">VoIP / WebRTC / SMS / Email / Chat</text>
+
+                <rect x="260" y="20" width="220" height="60" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+                <text x="275" y="45" fill="#111111" font-size="14">Automated Interview Agent</text>
+                <text x="275" y="63" fill="#5f6572" font-size="12">NLU · Policy · Escalation</text>
+
+                <rect x="520" y="20" width="210" height="60" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+                <text x="535" y="45" fill="#111111" font-size="14">Transcribe · Summarise · Context</text>
+
+                <rect x="150" y="120" width="440" height="60" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+                <text x="165" y="145" fill="#111111" font-size="14">Secure Data Platform &amp; Governance</text>
+                <text x="165" y="163" fill="#5f6572" font-size="12">Consent · RBAC · Encryption · Audit</text>
+
+                <rect x="610" y="120" width="120" height="60" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+                <text x="620" y="145" fill="#111111" font-size="14">Thematic</text>
+                <text x="620" y="163" fill="#5f6572" font-size="12">Analysis</text>
+
+                <rect x="10" y="120" width="120" height="60" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+                <text x="20" y="145" fill="#111111" font-size="14">HITL</text>
+                <text x="20" y="163" fill="#5f6572" font-size="12">Orchestration</text>
+
+                <!-- Arrows (purple) -->
+                <defs>
+                  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#5A2356" />
+                  </marker>
+                </defs>
+                <line x1="220" y1="50" x2="260" y2="50" stroke="#5A2356" stroke-width="2.5" marker-end="url(#arrow)" />
+                <line x1="480" y1="50" x2="520" y2="50" stroke="#5A2356" stroke-width="2.5" marker-end="url(#arrow)" />
+                <line x1="370" y1="80" x2="370" y2="120" stroke="#5A2356" stroke-width="2.5" marker-end="url(#arrow)" />
+                <line x1="590" y1="150" x2="610" y2="150" stroke="#5A2356" stroke-width="2.5" marker-end="url(#arrow)" />
+                <line x1="150" y1="150" x2="130" y2="150" stroke="#5A2356" stroke-width="2.5" marker-end="url(#arrow)" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Project 1 -->
+  <section id="project-1" class="page" role="region" aria-labelledby="p1-title">
+    <div class="container">
+      <a href="#home" class="backlink">← Back to Home</a>
+      <h1 id="p1-title">Project 1 — Mapping Current Interview &amp; Data Collection Processes</h1>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Overview</h2>
+          <p>Establish ground truth across hospitals/clinics: who collects what, via which channels (phone, in-person, online forms), how consent is captured, where data goes, and how it is later used. Produce <em>as-is</em> maps, pain points, compliance risks, and a prioritised <em>to-be</em> design.</p>
+          <div class="meta">
+            <span class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">Phase: Discovery (Months 0–3)</span>
+            <span class="chip">Methods: SLR · Field study · Process mining</span>
+            <span class="chip">Outputs: Maps · Gaps · Requirements</span>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Objectives</h2>
+          <ul>
+            <li>Document end-to-end interview and follow-up workflows by persona (nurse, admin, clinician, researcher).</li>
+            <li>Identify fragmentation, delays, re-work, and compliance exposure (privacy, consent, retention).</li>
+            <li>Define measurable KPIs (time-to-contact, completion rate, escalation %).</li>
+            <li>Derive functional &amp; non-functional requirements for the integrated platform.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Methodology</h2>
+          <ul>
+            <li><strong>Systematic Literature Review</strong> on healthcare interviewing, digital consent, and data governance.</li>
+            <li><strong>Semi-structured interviews</strong> with staff; <strong>contextual inquiry</strong> and shadowing.</li>
+            <li><strong>Process mining</strong> from call logs/CRM to surface bottlenecks and re-work loops.</li>
+            <li><strong>BPMN</strong> mapping of <em>as-is</em> and <em>to-be</em> processes with RACI.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Planned Outcomes</h2>
+          <ul>
+            <li>Consolidated requirements (functional, security, privacy, interoperability).</li>
+            <li>Prioritised backlog for MVP and pilot sites.</li>
+            <li>Validated <em>to-be</em> designs with stakeholders and risk sign-off.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Milestones</h2>
+          <ul>
+            <li>M1: Stakeholder map &amp; ethics approvals.</li>
+            <li>M2: As-is maps; pain-point inventory; baseline KPIs.</li>
+            <li>M3: To-be designs; MVP backlog &amp; acceptance criteria.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Risks &amp; Mitigations</h2>
+          <ul>
+            <li>Access to staff/time → schedule micro-sessions; asynchronous validation.</li>
+            <li>Hidden shadow processes → triangulate with logs and artefacts.</li>
+            <li>Scope creep → MoSCoW prioritisation; governance cadence.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project 2 -->
+  <section id="project-2" class="page" role="region" aria-labelledby="p2-title">
+    <div class="container">
+      <a href="#home" class="backlink">← Back to Home</a>
+      <h1 id="p2-title">Project 2 — Automated Interview Agent (Voice + Text)</h1>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Overview</h2>
+          <p>Design a safe, effective AI agent to handle inbound/outbound <strong>VoIP</strong> calls, <strong>SMS</strong>, and <strong>web chat</strong>. The agent triages, captures consent, schedules or reschedules appointments, and escalates to humans when confidence is low or risk is high.</p>
+          <div class="meta">
+            <span class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">Phase: Build (Months 4–9)</span>
+            <span class="chip">Channels: SIP/VoIP · WebRTC · SMS · Email</span>
+            <span class="chip">Outcomes: MVP bot + policies</span>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Objectives</h2>
+          <ul>
+            <li>Achieve high task completion without compromising safety or consent integrity.</li>
+            <li>Support multilingual prompts and accessibility (e.g., TTY/TDD, screen reader friendly chat).</li>
+            <li>Integrate with scheduling systems (calendar APIs) and send confirmations via SMS/email.</li>
+            <li>Define and test escalation thresholds and operator handover UX.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Methodology</h2>
+          <ul>
+            <li><strong>Design Science</strong> iterative builds; <strong>UCD</strong> with patients and staff.</li>
+            <li>Conversation design with <strong>safety guardrails</strong> (do-not-answer lists, clinical boundaries).</li>
+            <li>A/B tests on prompts; <strong>confidence-aware</strong> fallback; <strong>real-time human takeover</strong>.</li>
+            <li>Metrics: containment rate, first-contact resolution, user satisfaction (CSAT), average handle time.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Planned Outcomes</h2>
+          <ul>
+            <li>Working prototype integrated with SIP/WebRTC and SMS gateways.</li>
+            <li>Documented escalation playbook and consent scripts.</li>
+            <li>Evaluation report with success thresholds for pilot rollout.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Risks &amp; Mitigations</h2>
+          <ul>
+            <li>Misclassification → conservative thresholds; human review; post-call QA.</li>
+            <li>Latency/jitter in VoIP → edge media servers; QoS; fall back to call-back.</li>
+            <li>Consent ambiguity → explicit confirmations; recorded consent artefacts.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Milestones</h2>
+          <ul>
+            <li>M1: Dialogue flows; consent &amp; safety policies.</li>
+            <li>M2: VoIP/SMS integration; scheduling; email follow-ups.</li>
+            <li>M3: Pilot-ready MVP; evaluation KPIs met.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project 3 -->
+  <section id="project-3" class="page" role="region" aria-labelledby="p3-title">
+    <div class="container">
+      <a href="#home" class="backlink">← Back to Home</a>
+      <h1 id="p3-title">Project 3 — Transcription, Summarisation &amp; Contextualisation Pipeline</h1>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Overview</h2>
+          <p>Build a clinical-grade pipeline: <strong>speech-to-text (STT)</strong> with medical vocabulary, <strong>speaker diarisation</strong>, structured <strong>summaries</strong>, and <strong>context merges</strong> (appointment metadata, EMR snippets) with provenance.</p>
+          <div class="meta">
+            <span class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">Phase: Build (Months 4–9)</span>
+            <span class="chip">Outcomes: Production-grade pipeline</span>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Objectives</h2>
+          <ul>
+            <li>Minimise word error rate (WER) on domain audio (accents, clinical terms).</li>
+            <li>Generate faithful, attributed summaries; no hallucinations; show citations to transcript spans.</li>
+            <li>Support email delivery of visit summaries to authorised recipients with consent.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Methodology</h2>
+          <ul>
+            <li>Benchmark multiple STT models; fine-tune lexicons; noise-robust preprocessing.</li>
+            <li>Prompting/evaluation harness for summary quality (factuality, coverage, style constraints).</li>
+            <li>Human QA sampling; red-team tests on sensitive prompts; privacy overlay for PII masking.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Planned Outcomes</h2>
+          <ul>
+            <li>Modular pipeline (STT → diarise → segment → summarise → contextualise → store).</li>
+            <li>Quality dashboards: WER, ROUGE-L, factuality, latency, cost per hour.</li>
+            <li>Schema for transcripts, summary JSON, and provenance links.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Risks &amp; Mitigations</h2>
+          <ul>
+            <li>Domain terminology errors → domain lexicon; post-edit queue.</li>
+            <li>Privacy leakage → on-prem or private inference; PII masking; strict access controls.</li>
+            <li>Latency under load → batching/streaming; GPU autoscaling; async email delivery.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Milestones</h2>
+          <ul>
+            <li>M1: Baseline STT benchmark &amp; target WER.</li>
+            <li>M2: Summarisation harness with fidelity checks.</li>
+            <li>M3: Context merge &amp; schema; pilot integration.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project 4 -->
+  <section id="project-4" class="page" role="region" aria-labelledby="p4-title">
+    <div class="container">
+      <a href="#home" class="backlink">← Back to Home</a>
+      <h1 id="p4-title">Project 4 — Secure Data Platform &amp; Governance</h1>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Overview</h2>
+          <p>Design a secure platform for storing transcripts, summaries, artefacts, and analytics while meeting privacy regulations (e.g., Australian Privacy Act, HIPAA/GDPR contexts). Implement consent, identity, encryption, RBAC, and full auditability.</p>
+          <div class="meta">
+            <span class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">Phase: Platform (Months 6–24)</span>
+            <span class="chip">Outcomes: Governance + blueprint</span>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Objectives</h2>
+          <ul>
+            <li>Single, secure source of truth for interview data and derived artefacts.</li>
+            <li>Data lifecycle: consent, retention, deletion, and subject access requests (SAR).</li>
+            <li>Defensible security posture aligned to NIST CSF/ISO 27001; threat-modelled (STRIDE).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Methodology</h2>
+          <ul>
+            <li>Security architecture with <strong>zero trust</strong> principles; encryption in transit/at rest; KMS.</li>
+            <li>Privacy Impact Assessment; Data Protection Impact Assessment; data minimisation.</li>
+            <li>RBAC/ABAC design; tamper-evident audit logs; break-glass procedures.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Planned Outcomes</h2>
+          <ul>
+            <li>Reference architecture (cloud/on-prem), IaC blueprints, and runbooks.</li>
+            <li>Governance policies (consent, retention, classification, incident response).</li>
+            <li>Compliance mapping to regulatory obligations and hospital policies.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Risks &amp; Mitigations</h2>
+          <ul>
+            <li>Over-permissive access → least privilege, just-in-time access, continuous review.</li>
+            <li>Regulatory drift → periodic compliance reviews; policy as code.</li>
+            <li>Vendor lock-in → open schemas, export pipelines, and abstraction layers.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Milestones</h2>
+          <ul>
+            <li>M1: Threat model &amp; PIA/DPIA; control baseline.</li>
+            <li>M2: Reference architecture &amp; IaC; audit log pipeline.</li>
+            <li>M3: Policy set ratified; access reviews in place.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project 5 -->
+  <section id="project-5" class="page" role="region" aria-labelledby="p5-title">
+    <div class="container">
+      <a href="#home" class="backlink">← Back to Home</a>
+      <h1 id="p5-title">Project 5 — AI-Assisted Thematic Analysis</h1>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Overview</h2>
+          <p>Develop a research tool that assists human analysts to code transcripts, suggest themes, and maintain a transparent, reproducible codebook with provenance to raw text. Emphasis on auditability and inter-rater reliability.</p>
+          <div class="meta">
+            <span class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">Phase: Pilot (Months 9–15)</span>
+            <span class="chip">Outcomes: Analyst workspace + studies</span>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Objectives</h2>
+          <ul>
+            <li>Speed up coding without reducing rigour; maintain researcher agency.</li>
+            <li>Support active learning: model suggests codes; humans accept/edit; model improves.</li>
+            <li>Provide exports (CSV/JSON) for further statistics or SEM/qualitative tools.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Methodology</h2>
+          <ul>
+            <li>Qualitative methods (e.g., Braun &amp; Clarke) integrated with ML (topic modelling, embeddings).</li>
+            <li>Measure inter-rater reliability (e.g., Cohen’s κ); usability tests; workload (NASA-TLX).</li>
+            <li>Ethics: minimise bias; transparent suggestions; enable contestability and appeals.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Planned Outcomes</h2>
+          <ul>
+            <li>Web workspace for coding, codebook management, and provenance trails.</li>
+            <li>Evaluation study showing time savings vs quality; reproducible pipeline.</li>
+            <li>Guidelines for safe, valid AI assistance in qualitative research.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Risks &amp; Mitigations</h2>
+          <ul>
+            <li>Automation bias → emphasise human authority; show confidence and rationales.</li>
+            <li>Theme drift over time → versioned codebooks; frozen baselines for comparability.</li>
+            <li>Privacy of sensitive text → in-platform de-identification; secure enclaves.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Milestones</h2>
+          <ul>
+            <li>M1: Prototype coding UI + embeddings search.</li>
+            <li>M2: Active-learning loop; kappa monitoring.</li>
+            <li>M3: Research study &amp; publication draft.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project 6 -->
+  <section id="project-6" class="page" role="region" aria-labelledby="p6-title">
+    <div class="container">
+      <a href="#home" class="backlink">← Back to Home</a>
+      <h1 id="p6-title">Project 6 — Human-in-the-Loop Orchestration &amp; Escalation</h1>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Overview</h2>
+          <p>Design service orchestration that routes tasks between AI and humans with clear <strong>SLAs</strong>, <strong>operator tools</strong>, and safety policies. Provide consoles for supervisors and clinicians to monitor queues and take over calls or chats seamlessly.</p>
+          <div class="meta">
+            <span class="chip" style="background:var(--orange); color:#111; border-color:var(--orange);">Phase: Pilot→Scale (Months 9–24)</span>
+            <span class="chip">Outcomes: Orchestrator + Console</span>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Objectives</h2>
+          <ul>
+            <li>Define escalation triggers (low confidence, safety phrases, clinical boundaries, consent issues).</li>
+            <li>Enable one-click human takeover with context transfer; record outcomes.</li>
+            <li>Provide dashboards: backlog, SLA breaches, safety incidents, operator utilisation.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Methodology</h2>
+          <ul>
+            <li>Workflow engine (e.g., BPMN) for routes and timers; policy-as-code for guardrails.</li>
+            <li>Service design with patients/clinicians; incident post-mortems; playbook drills.</li>
+            <li>Simulation &amp; A/B tests to optimise thresholds and staffing models.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Planned Outcomes</h2>
+          <ul>
+            <li>Operator console and supervisor dashboard; audit trails for all actions.</li>
+            <li>Escalation playbooks and standard operating procedures (SOPs).</li>
+            <li>Readiness checklist for scale-out to multiple sites.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:10px;">
+        <div class="section">
+          <h2>Risks &amp; Mitigations</h2>
+          <ul>
+            <li>Alert fatigue → smarter triggers; noise budgets; tiered escalation.</li>
+            <li>Hand-off friction → rich context pass; pre-brief summaries.</li>
+            <li>Operational drift → scheduled reviews; continuous training; QA sampling.</li>
+          </ul>
+        </div>
+        <div class="section">
+          <h2>Milestones</h2>
+          <ul>
+            <li>M1: Escalation policy &amp; simulator.</li>
+            <li>M2: Console MVP; SLA monitors.</li>
+            <li>M3: Multi-site pilot; scale playbook.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer band (purple) -->
+  <footer class="band">
+    <div class="container inner">
+      <strong>Raj Gururajan, KC Chan, Xujuan Zhou</strong>, School of Business, University of Southern Queensland
+    </div>
+  </footer>
+
+  <script>
+    // Minimal hash router + nav state + print
+    const pages = Array.from(document.querySelectorAll('.page'));
+    const navLinks = Array.from(document.querySelectorAll('nav a[data-link]'));
+    function activate(hash){
+      const id = (hash || '#home').split('?')[0];
+      pages.forEach(p => p.classList.toggle('active', '#' + p.id === id));
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+      if (document.scrollingElement) document.scrollingElement.scrollTo({top:0, behavior:'instant'});
+    }
+    window.addEventListener('hashchange', () => activate(location.hash));
+    document.addEventListener('DOMContentLoaded', () => activate(location.hash || '#home'));
+
+    // Print handler
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+  </script>
+</body>
+</html>
